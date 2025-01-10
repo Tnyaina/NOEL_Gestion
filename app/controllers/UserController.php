@@ -124,91 +124,91 @@ class UserController
 
     // Dans UserController.php, mettre à jour la méthode selectionnerCadeaux :
 
-public function selectionnerCadeaux()
-{
-    if (!isset($_SESSION['user'])) {
-        Flight::redirect('/');
-        return;
+    public function selectionnerCadeaux()
+    {
+        if (!isset($_SESSION['user'])) {
+            Flight::redirect('/');
+            return;
+        }
+
+        $nb_filles = (int)Flight::request()->data->nb_filles;
+        $nb_garcons = (int)Flight::request()->data->nb_garcons;
+
+        // Vérifier qu'il y a au moins un enfant
+        if ($nb_filles + $nb_garcons === 0) {
+            $_SESSION['error'] = 'Veuillez indiquer au moins un enfant';
+            Flight::redirect('/accueil');
+            return;
+        }
+
+        // Récupérer les suggestions de cadeaux
+        $suggestions = $this->userModel->getSuggestionsCadeaux($nb_filles, $nb_garcons);
+
+        // Sauvegarder les informations dans la session
+        $_SESSION['selection'] = [
+            'nb_filles' => $nb_filles,
+            'nb_garcons' => $nb_garcons,
+            'cadeaux' => $suggestions
+        ];
+
+        // Calculer le total des cadeaux
+        $totalCadeaux = 0;
+        foreach ($suggestions as $cadeau) {
+            $totalCadeaux += $cadeau['prix'];
+        }
+
+        // Récupérer le solde actuel
+        $solde = $this->userModel->getSoldeValide($_SESSION['user']['id_user']);
+
+        // Récupérer le taux de commission actuel
+        $commission = $this->userModel->getCurrentCommission();
+
+        // Calculer le montant nécessaire avec commission
+        $montantDepotNecessaire = $totalCadeaux / (1 - ($commission['taux'] / 100));
+        $montantManquant = max(0, $montantDepotNecessaire - $solde);
+
+        Flight::render('user/selection-cadeaux', [
+            'cadeaux' => $suggestions,
+            'solde' => $solde,
+            'totalCadeaux' => $totalCadeaux,
+            'commission' => $commission['taux'],
+            'montantManquant' => $montantManquant
+        ]);
     }
-
-    $nb_filles = (int)Flight::request()->data->nb_filles;
-    $nb_garcons = (int)Flight::request()->data->nb_garcons;
-
-    // Vérifier qu'il y a au moins un enfant
-    if ($nb_filles + $nb_garcons === 0) {
-        $_SESSION['error'] = 'Veuillez indiquer au moins un enfant';
-        Flight::redirect('/accueil');
-        return;
-    }
-
-    // Récupérer les suggestions de cadeaux
-    $suggestions = $this->userModel->getSuggestionsCadeaux($nb_filles, $nb_garcons);
-
-    // Sauvegarder les informations dans la session
-    $_SESSION['selection'] = [
-        'nb_filles' => $nb_filles,
-        'nb_garcons' => $nb_garcons,
-        'cadeaux' => $suggestions
-    ];
-
-    // Calculer le total des cadeaux
-    $totalCadeaux = 0;
-    foreach ($suggestions as $cadeau) {
-        $totalCadeaux += $cadeau['prix'];
-    }
-
-    // Récupérer le solde actuel
-    $solde = $this->userModel->getSoldeValide($_SESSION['user']['id_user']);
-
-    // Récupérer le taux de commission actuel
-    $commission = $this->userModel->getCurrentCommission();
-    
-    // Calculer le montant nécessaire avec commission
-    $montantDepotNecessaire = $totalCadeaux / (1 - ($commission['taux'] / 100));
-    $montantManquant = max(0, $montantDepotNecessaire - $solde);
-
-    Flight::render('user/selection-cadeaux', [
-        'cadeaux' => $suggestions,
-        'solde' => $solde,
-        'totalCadeaux' => $totalCadeaux,
-        'commission' => $commission['taux'],
-        'montantManquant' => $montantManquant
-    ]);
-}
 
     // In UserController.php, update the afficherSelectionCadeaux method:
 
-public function afficherSelectionCadeaux()
-{
-    if (!isset($_SESSION['user']) || !isset($_SESSION['selection'])) {
-        Flight::redirect('/');
-        return;
+    public function afficherSelectionCadeaux()
+    {
+        if (!isset($_SESSION['user']) || !isset($_SESSION['selection'])) {
+            Flight::redirect('/');
+            return;
+        }
+
+        // Calculate total of selected gifts
+        $totalCadeaux = 0;
+        foreach ($_SESSION['selection']['cadeaux'] as $cadeau) {
+            $totalCadeaux += $cadeau['prix'];
+        }
+
+        // Get current balance
+        $solde = $this->userModel->getSoldeValide($_SESSION['user']['id_user']);
+
+        // Get current commission rate
+        $commission = $this->userModel->getCurrentCommission();
+
+        // Calculate required amount with commission
+        $montantDepotNecessaire = $totalCadeaux / (1 - ($commission['taux'] / 100));
+        $montantManquant = max(0, $montantDepotNecessaire - $solde);
+
+        Flight::render('user/selection-cadeaux', [
+            'cadeaux' => $_SESSION['selection']['cadeaux'],
+            'solde' => $solde,
+            'totalCadeaux' => $totalCadeaux,
+            'commission' => $commission['taux'],
+            'montantManquant' => $montantManquant
+        ]);
     }
-
-    // Calculate total of selected gifts
-    $totalCadeaux = 0;
-    foreach ($_SESSION['selection']['cadeaux'] as $cadeau) {
-        $totalCadeaux += $cadeau['prix'];
-    }
-
-    // Get current balance
-    $solde = $this->userModel->getSoldeValide($_SESSION['user']['id_user']);
-
-    // Get current commission rate
-    $commission = $this->userModel->getCurrentCommission();
-    
-    // Calculate required amount with commission
-    $montantDepotNecessaire = $totalCadeaux / (1 - ($commission['taux'] / 100));
-    $montantManquant = max(0, $montantDepotNecessaire - $solde);
-
-    Flight::render('user/selection-cadeaux', [
-        'cadeaux' => $_SESSION['selection']['cadeaux'],
-        'solde' => $solde,
-        'totalCadeaux' => $totalCadeaux,
-        'commission' => $commission['taux'],
-        'montantManquant' => $montantManquant
-    ]);
-}
 
     public function changerCadeau()
     {
@@ -301,53 +301,94 @@ public function afficherSelectionCadeaux()
 
     // Dans UserController.php, ajoutez ces méthodes
 
-public function showDepotForm()
-{
-    if (!isset($_SESSION['user'])) {
-        Flight::redirect('/');
-        return;
-    }
-    
-    Flight::render('user/depot', [
-        'error' => $_SESSION['depot_error'] ?? null,
-        'success' => $_SESSION['depot_success'] ?? null,
-        'solde' => $this->userModel->getSoldeValide($_SESSION['user']['id_user']),
-        'commission' => $this->userModel->getCurrentCommission()
-    ]);
-    
-    unset($_SESSION['depot_error'], $_SESSION['depot_success']);
-}
+    public function showDepotForm()
+    {
+        if (!isset($_SESSION['user'])) {
+            Flight::redirect('/');
+            return;
+        }
 
-public function faireDepot()
-{
-    if (!isset($_SESSION['user'])) {
-        Flight::redirect('/');
-        return;
+        Flight::render('user/depot', [
+            'error' => $_SESSION['depot_error'] ?? null,
+            'success' => $_SESSION['depot_success'] ?? null,
+            'solde' => $this->userModel->getSoldeValide($_SESSION['user']['id_user']),
+            'commission' => $this->userModel->getCurrentCommission()
+        ]);
+
+        unset($_SESSION['depot_error'], $_SESSION['depot_success']);
     }
 
-    $montant = filter_var(Flight::request()->data->montant, FILTER_VALIDATE_FLOAT);
-    $commission = $this->userModel->calculerMontantApresCommission($montant);
+    public function faireDepot()
+    {
+        if (!isset($_SESSION['user'])) {
+            Flight::redirect('/');
+            return;
+        }
 
-    if (!$montant || $montant <= 0) {
-        $_SESSION['depot_error'] = 'Le montant doit être un nombre positif';
-        Flight::redirect('/depot');
-        return;
-    }
+        $montant = filter_var(Flight::request()->data->montant, FILTER_VALIDATE_FLOAT);
+        $commission = $this->userModel->calculerMontantApresCommission($montant);
 
-    try {
-        $success = $this->userModel->creerDepot($_SESSION['user']['id_user'], $commission);
-        if ($success) {
-            $_SESSION['depot_success'] = 'Votre demande de dépôt a été enregistrée et est en attente de validation';
+        if (!$montant || $montant <= 0) {
+            $_SESSION['depot_error'] = 'Le montant doit être un nombre positif';
             Flight::redirect('/depot');
-        } else {
-            $_SESSION['depot_error'] = 'Une erreur est survenue lors du dépôt';
+            return;
+        }
+
+        try {
+            $success = $this->userModel->creerDepot($_SESSION['user']['id_user'], $commission);
+            if ($success) {
+                $_SESSION['depot_success'] = 'Votre demande de dépôt a été enregistrée et est en attente de validation';
+                Flight::redirect('/depot');
+            } else {
+                $_SESSION['depot_error'] = 'Une erreur est survenue lors du dépôt';
+                Flight::redirect('/depot');
+            }
+        } catch (Exception $e) {
+            $_SESSION['depot_error'] = 'Une erreur est survenue : ' . $e->getMessage();
             Flight::redirect('/depot');
         }
-    } catch (Exception $e) {
-        $_SESSION['depot_error'] = 'Une erreur est survenue : ' . $e->getMessage();
-        Flight::redirect('/depot');
     }
-}
+
+    public function faireDepotRapide()
+    {
+        if (!isset($_SESSION['user'])) {
+            Flight::redirect('/');
+            return;
+        }
+
+        $montant = filter_var(Flight::request()->data->montant, FILTER_VALIDATE_FLOAT);
+        $commission = $this->userModel->calculerMontantApresCommission($montant);
+
+        if (!$montant || $montant <= 0) {
+            $_SESSION['error'] = 'Le montant du dépôt est invalide';
+            Flight::redirect('/selection-cadeaux');
+            return;
+        }
+
+        try {
+            // Créer directement un dépôt validé
+            $stmt = Flight::db()->prepare(
+                "INSERT INTO depot (id_user, montant, status_depot) 
+             VALUES (:id_user, :montant, 'valide')"
+            );
+
+            $success = $stmt->execute([
+                'id_user' => $_SESSION['user']['id_user'],
+                'montant' => $commission
+            ]);
+
+            if ($success) {
+                $_SESSION['success'] = 'Dépôt effectué avec succès !';
+                Flight::redirect('/selection-cadeaux');
+            } else {
+                $_SESSION['error'] = 'Une erreur est survenue lors du dépôt';
+                Flight::redirect('/selection-cadeaux');
+            }
+        } catch (Exception $e) {
+            $_SESSION['error'] = 'Une erreur est survenue : ' . $e->getMessage();
+            Flight::redirect('/selection-cadeaux');
+        }
+    }
     public function logout()
     {
         // Détruire la session

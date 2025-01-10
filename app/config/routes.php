@@ -126,3 +126,8 @@ Flight::route('POST /admin/commission', function() {
     $controller = new AdminController();
     $controller->updateCommission();
 });
+
+Flight::route('POST /depot-rapide', function() {
+    $controller = new UserController();
+    $controller->faireDepotRapide();
+});

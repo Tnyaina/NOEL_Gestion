@@ -266,6 +266,44 @@ if (!isset($_SESSION['user']) || !isset($_SESSION['selection'])) {
         .changer-tous-btn i {
             margin-right: 8px;
         }
+
+        .quick-deposit {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px;
+            text-align: center;
+            color: #333;
+            border: 2px dashed #c41e3a;
+        }
+
+        .montant-manquant {
+            font-size: 1.2em;
+            color: #c41e3a;
+            margin: 10px 0;
+        }
+
+        .deposit-btn {
+            background-color: #1a472a;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        .deposit-btn:hover {
+            background-color: #2c6a3f;
+            transform: scale(1.05);
+        }
+
+        .commission-info {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 10px;
+        }
     </style>
 </head>
 
@@ -308,92 +346,118 @@ if (!isset($_SESSION['user']) || !isset($_SESSION['selection'])) {
         </div>
 
         <!-- Ajout des styles pour l'image -->
-<style>
-    .cadeau-card {
-        background: white;
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-    }
+        <style>
+            .cadeau-card {
+                background: white;
+                border-radius: 10px;
+                padding: 20px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s ease;
+                position: relative;
+                display: flex;
+                flex-direction: column;
+            }
 
-    .cadeau-image {
-        width: 100%;
-        height: 200px;
-        margin-bottom: 15px;
-        border-radius: 8px;
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #f5f5f5;
-    }
+            .cadeau-image {
+                width: 100%;
+                height: 200px;
+                margin-bottom: 15px;
+                border-radius: 8px;
+                overflow: hidden;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #f5f5f5;
+            }
 
-    .cadeau-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+            .cadeau-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
 
-    .cadeau-image .no-image {
-        color: #999;
-        font-size: 40px;
-    }
+            .cadeau-image .no-image {
+                color: #999;
+                font-size: 40px;
+            }
 
-    .cadeau-details {
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-    }
-</style>
+            .cadeau-details {
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+            }
+        </style>
 
-<!-- Mise à jour de la structure de la carte -->
-<div class="cadeaux-grid">
-    <?php foreach ($_SESSION['selection']['cadeaux'] as $index => $cadeau): ?>
-        <div class="cadeau-card">
-            <span class="cadeau-type type-<?= htmlspecialchars($cadeau['categorie']) ?>">
-                <?= ucfirst(htmlspecialchars($cadeau['categorie'])) ?>
-            </span>
-            
-            <div class="cadeau-image">
-                <?php if (!empty($cadeau['photo_url'])) : ?>
-                    <img src="<?= htmlspecialchars($cadeau['photo_url']) ?>" 
-                         alt="Photo de <?= htmlspecialchars($cadeau['nom']) ?>">
-                <?php else : ?>
-                    <i class="fas fa-gift no-image"></i>
-                <?php endif; ?>
-            </div>
+        <!-- Mise à jour de la structure de la carte -->
+        <div class="cadeaux-grid">
+            <?php foreach ($_SESSION['selection']['cadeaux'] as $index => $cadeau): ?>
+                <div class="cadeau-card">
+                    <span class="cadeau-type type-<?= htmlspecialchars($cadeau['categorie']) ?>">
+                        <?= ucfirst(htmlspecialchars($cadeau['categorie'])) ?>
+                    </span>
 
-            <div class="cadeau-details">
-                <h3><?= htmlspecialchars($cadeau['nom']) ?></h3>
-                <div class="cadeau-prix"><?= number_format($cadeau['prix'], 2) ?> €</div>
-                <form action="/changer-cadeau" method="POST">
-                    <input type="hidden" name="id_cadeau" value="<?= $cadeau['id_cadeaux'] ?>">
-                    <input type="hidden" name="type" value="<?= $cadeau['categorie'] ?>">
-                    <button type="submit" class="changer-btn">
-                        <i class="fas fa-sync-alt"></i>
-                        Changer ce cadeau
-                    </button>
-                </form>
-            </div>
+                    <div class="cadeau-image">
+                        <?php if (!empty($cadeau['photo_url'])) : ?>
+                            <img src="<?= htmlspecialchars($cadeau['photo_url']) ?>"
+                                alt="Photo de <?= htmlspecialchars($cadeau['nom']) ?>">
+                        <?php else : ?>
+                            <i class="fas fa-gift no-image"></i>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="cadeau-details">
+                        <h3><?= htmlspecialchars($cadeau['nom']) ?></h3>
+                        <div class="cadeau-prix"><?= number_format($cadeau['prix'], 2) ?> €</div>
+                        <form action="/changer-cadeau" method="POST">
+                            <input type="hidden" name="id_cadeau" value="<?= $cadeau['id_cadeaux'] ?>">
+                            <input type="hidden" name="type" value="<?= $cadeau['categorie'] ?>">
+                            <button type="submit" class="changer-btn">
+                                <i class="fas fa-sync-alt"></i>
+                                Changer ce cadeau
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </div>
-    <?php endforeach; ?>
-</div>
 
         <div class="total-section">
             <span>Total des cadeaux:</span>
             <span class="total-montant">
                 <?= number_format(array_sum(array_column($_SESSION['selection']['cadeaux'], 'prix')), 2) ?> €
             </span>
-            <form action="/valider-cadeaux" method="POST">
-                <button type="submit" class="valider-btn">
-                    <i class="fas fa-check-circle"></i>
-                    Valider la sélection
-                </button>
-            </form>
+
+            <?php
+            $total = array_sum(array_column($_SESSION['selection']['cadeaux'], 'prix'));
+            $solde = isset($solde) ? $solde : 0;
+            $commission = isset($commission) ? $commission : 10;
+            $montantManquant = max(0, $total - $solde);
+
+            if ($montantManquant > 0):
+                $montantDepot = $montantManquant / (1 - ($commission / 100));
+            ?>
+                <div class="quick-deposit">
+                    <h3>Solde insuffisant</h3>
+                    <p>Il vous manque <span class="montant-manquant"><?= number_format($montantManquant, 2) ?> €</span> pour valider votre sélection.</p>
+                    <div class="commission-info">
+                        Commission (<?= $commission ?>%) incluse dans le montant du dépôt
+                    </div>
+                    <form action="/depot-rapide" method="POST" style="margin-top: 15px;">
+                        <input type="hidden" name="montant" value="<?= number_format($montantDepot, 2) ?>">
+                        <button type="submit" class="deposit-btn">
+                            <i class="fas fa-plus-circle"></i>
+                            Déposer <?= number_format($montantDepot, 2) ?> €
+                        </button>
+                    </form>
+                </div>
+            <?php else: ?>
+                <form action="/valider-cadeaux" method="POST">
+                    <button type="submit" class="valider-btn">
+                        <i class="fas fa-check-circle"></i>
+                        Valider la sélection
+                    </button>
+                </form>
+            <?php endif; ?>
         </div>
     </div>
 </body>

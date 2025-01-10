@@ -11,8 +11,6 @@
 </head>
 
 <body>
-    <h3>ETU003080 && ETU003188</h3>
-    <h3>Admin : admin@example.com && mdp :12345678</h3>
     <div id="notification-container"></div>
     <section class="container">
         <div class="auth-container">
