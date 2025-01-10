@@ -64,7 +64,7 @@ class UserController
     {
         $email = Flight::request()->data->email;
         $password = Flight::request()->data->password;
-        $confirm_password = Flight::request()->data->confirm_password;
+        $confirm_password = Flight::request()->data->confirmPassword;
 
         // Validation des données
         $errors = [];
