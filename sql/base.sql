@@ -50,3 +50,18 @@ CREATE TABLE COMMANDE_DETAILS (
     FOREIGN KEY (id_commande) REFERENCES COMMANDE(id_commande),
     FOREIGN KEY (id_cadeaux) REFERENCES CADEAUX(id_cadeaux)
 );
+
+ALTER TABLE CADEAUX
+ADD COLUMN photo_url VARCHAR(255) NOT NULL;
+
+
+-- Création de la table COMMISSION
+CREATE TABLE COMMISSION (
+    id_commission INT PRIMARY KEY AUTO_INCREMENT,
+    taux DECIMAL(5,2) NOT NULL,
+    date_modification DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insertion d'une valeur par défaut (10%)
+INSERT INTO COMMISSION (taux) VALUES (10.00);
+

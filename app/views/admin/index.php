@@ -177,9 +177,13 @@
                 <i class="fas fa-home"></i>
                 Accueil
             </a>
-            <a href="/cadeaux" class="nav-link">
+            <a href="/ajout" class="nav-link">
                 <i class="fas fa-gift"></i>
                 Cadeaux
+            </a>
+            <a href="/admin/commission" class="nav-link">
+                <i class="fas fa-percentage"></i>
+                Configuration Commission
             </a>
         </div>
         <a href="/logout" class="nav-link logout-link">

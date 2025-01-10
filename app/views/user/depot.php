@@ -157,6 +157,8 @@ if (!isset($_SESSION['user'])) {
                 <i class="fas fa-euro-sign"></i> Faire un dépôt
             </h2>
 
+            <h3 style="font-size: 24px; color: #c41e3a;">Taux de commission actuel : <?= number_format($commission['taux'], 2) ?>%</h3>
+
             <?php if (isset($error)): ?>
                 <div class="error-message">
                     <i class="fas fa-exclamation-circle"></i>

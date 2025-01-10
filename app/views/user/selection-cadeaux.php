@@ -307,25 +307,81 @@ if (!isset($_SESSION['user']) || !isset($_SESSION['selection'])) {
             </form>
         </div>
 
-        <div class="cadeaux-grid">
-            <?php foreach ($_SESSION['selection']['cadeaux'] as $index => $cadeau): ?>
-                <div class="cadeau-card">
-                    <span class="cadeau-type type-<?= htmlspecialchars($cadeau['categorie']) ?>">
-                        <?= ucfirst(htmlspecialchars($cadeau['categorie'])) ?>
-                    </span>
-                    <h3><?= htmlspecialchars($cadeau['nom']) ?></h3>
-                    <div class="cadeau-prix"><?= number_format($cadeau['prix'], 2) ?> €</div>
-                    <form action="/changer-cadeau" method="POST">
-                        <input type="hidden" name="id_cadeau" value="<?= $cadeau['id_cadeaux'] ?>">
-                        <input type="hidden" name="type" value="<?= $cadeau['categorie'] ?>">
-                        <button type="submit" class="changer-btn">
-                            <i class="fas fa-sync-alt"></i>
-                            Changer ce cadeau
-                        </button>
-                    </form>
-                </div>
-            <?php endforeach; ?>
+        <!-- Ajout des styles pour l'image -->
+<style>
+    .cadeau-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .cadeau-image {
+        width: 100%;
+        height: 200px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f5f5f5;
+    }
+
+    .cadeau-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .cadeau-image .no-image {
+        color: #999;
+        font-size: 40px;
+    }
+
+    .cadeau-details {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+</style>
+
+<!-- Mise à jour de la structure de la carte -->
+<div class="cadeaux-grid">
+    <?php foreach ($_SESSION['selection']['cadeaux'] as $index => $cadeau): ?>
+        <div class="cadeau-card">
+            <span class="cadeau-type type-<?= htmlspecialchars($cadeau['categorie']) ?>">
+                <?= ucfirst(htmlspecialchars($cadeau['categorie'])) ?>
+            </span>
+            
+            <div class="cadeau-image">
+                <?php if (!empty($cadeau['photo_url'])) : ?>
+                    <img src="<?= htmlspecialchars($cadeau['photo_url']) ?>" 
+                         alt="Photo de <?= htmlspecialchars($cadeau['nom']) ?>">
+                <?php else : ?>
+                    <i class="fas fa-gift no-image"></i>
+                <?php endif; ?>
+            </div>
+
+            <div class="cadeau-details">
+                <h3><?= htmlspecialchars($cadeau['nom']) ?></h3>
+                <div class="cadeau-prix"><?= number_format($cadeau['prix'], 2) ?> €</div>
+                <form action="/changer-cadeau" method="POST">
+                    <input type="hidden" name="id_cadeau" value="<?= $cadeau['id_cadeaux'] ?>">
+                    <input type="hidden" name="type" value="<?= $cadeau['categorie'] ?>">
+                    <button type="submit" class="changer-btn">
+                        <i class="fas fa-sync-alt"></i>
+                        Changer ce cadeau
+                    </button>
+                </form>
+            </div>
         </div>
+    <?php endforeach; ?>
+</div>
 
         <div class="total-section">
             <span>Total des cadeaux:</span>

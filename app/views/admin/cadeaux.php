@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <title>Gestion des Cadeaux - Joyeux Noël</title>
@@ -8,7 +9,7 @@
         body {
             font-family: 'Arial', sans-serif;
             background-color: #1a472a;
-            background-image: 
+            background-image:
                 radial-gradient(#ffffff 1px, transparent 1px),
                 radial-gradient(#ffffff 1px, transparent 1px);
             background-size: 50px 50px;
@@ -21,7 +22,7 @@
         .navbar {
             background: linear-gradient(145deg, #1a472a 0%, #0c2315 100%);
             padding: 15px 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -66,7 +67,7 @@
             padding: 20px;
             background: linear-gradient(145deg, #c41e3a 0%, #8b0000 100%);
             border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .cadeau-container {
@@ -74,7 +75,7 @@
             border-radius: 10px;
             padding: 20px;
             margin-top: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .btn-ajouter {
@@ -100,7 +101,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
         }
@@ -119,7 +120,8 @@
             gap: 15px;
         }
 
-        input, select {
+        input,
+        select {
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 5px;
@@ -131,7 +133,8 @@
             margin-top: 20px;
         }
 
-        th, td {
+        th,
+        td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
@@ -168,26 +171,25 @@
             left: 0;
             width: 100%;
             height: 20px;
-            background: repeating-linear-gradient(
-                45deg,
-                #c41e3a 0px,
-                #c41e3a 20px,
-                #1a472a 20px,
-                #1a472a 40px
-            );
+            background: repeating-linear-gradient(45deg,
+                    #c41e3a 0px,
+                    #c41e3a 20px,
+                    #1a472a 20px,
+                    #1a472a 40px);
         }
     </style>
 </head>
+
 <body>
     <div class="christmas-decoration"></div>
-    
+
     <nav class="navbar">
         <div class="nav-links">
             <a href="/admin" class="nav-link">
                 <i class="fas fa-home"></i>
                 Accueil
             </a>
-            <a href="/cadeaux" class="nav-link active">
+            <a href="/ajout" class="nav-link active">
                 <i class="fas fa-gift"></i>
                 Cadeaux
             </a>
@@ -213,6 +215,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Image</th>
                         <th>Nom</th>
                         <th>Catégorie</th>
                         <th>Prix</th>
@@ -220,23 +223,34 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($cadeaux as $cadeau) { ?>
-                    <tr>
-                        <td><?= htmlspecialchars($cadeau['nom']) ?></td>
-                        <td><?= htmlspecialchars($cadeau['categorie']) ?></td>
-                        <td><?= htmlspecialchars($cadeau['prix']) ?> €</td>
-                        <td>
-                            <button class="btn-modifier" onclick="showEditModal(<?= htmlspecialchars(json_encode($cadeau)) ?>)">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <form action="/cadeaux/supprimer" method="POST" style="display: inline;">
-                                <input type="hidden" name="id_cadeaux" value="<?= $cadeau['id_cadeaux'] ?>">
-                                <button type="submit" class="btn-supprimer" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce cadeau ?')">
-                                    <i class="fas fa-trash"></i>
+                    <?php foreach ($cadeaux as $cadeau) { ?>
+                        <tr>
+                            <td style="width: 120px; text-align: center;">
+                                <?php if (!empty($cadeau['photo_url'])) { ?>
+                                    <img src="<?= htmlspecialchars($cadeau['photo_url']) ?>"
+                                        alt="Photo du cadeau"
+                                        style="max-width: 100px; max-height: 100px; object-fit: cover; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                                <?php } else { ?>
+                                    <div style="width: 100px; height: 100px; background-color: #f0f0f0; border-radius: 5px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-image" style="color: #999; font-size: 24px;"></i>
+                                    </div>
+                                <?php } ?>
+                            </td>
+                            <td><?= htmlspecialchars($cadeau['nom']) ?></td>
+                            <td><?= htmlspecialchars($cadeau['categorie']) ?></td>
+                            <td><?= htmlspecialchars($cadeau['prix']) ?> €</td>
+                            <td>
+                                <button class="btn-modifier" onclick="showEditModal(<?= htmlspecialchars(json_encode($cadeau)) ?>)">
+                                    <i class="fas fa-edit"></i>
                                 </button>
-                            </form>
-                        </td>
-                    </tr>
+                                <form action="/cadeaux/supprimer" method="POST" style="display: inline;">
+                                    <input type="hidden" name="id_cadeaux" value="<?= $cadeau['id_cadeaux'] ?>">
+                                    <button type="submit" class="btn-supprimer" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce cadeau ?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
                     <?php } ?>
                 </tbody>
             </table>
@@ -247,7 +261,7 @@
     <div id="addModal" class="modal">
         <div class="modal-content">
             <h2>Ajouter un cadeau</h2>
-            <form action="/cadeaux/ajouter" method="POST">
+            <form action="/cadeaux/ajouter" method="POST" enctype="multipart/form-data">
                 <input type="text" name="nom" placeholder="Nom du cadeau" required>
                 <select name="categorie" required>
                     <option value="fille">Fille</option>
@@ -255,6 +269,7 @@
                     <option value="neutre">Neutre</option>
                 </select>
                 <input type="number" step="0.01" name="prix" placeholder="Prix" required>
+                <input type="file" name="photo" accept="image/*" required>
                 <button type="submit" class="btn-ajouter">Ajouter</button>
                 <button type="button" class="btn-supprimer" onclick="hideModal()">Annuler</button>
             </form>
@@ -265,7 +280,7 @@
     <div id="editModal" class="modal">
         <div class="modal-content">
             <h2>Modifier un cadeau</h2>
-            <form action="/cadeaux/modifier" method="POST">
+            <form action="/cadeaux/modifier" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="id_cadeaux" id="edit_id_cadeaux">
                 <input type="text" name="nom" id="edit_nom" placeholder="Nom du cadeau" required>
                 <select name="categorie" id="edit_categorie" required>
@@ -274,6 +289,8 @@
                     <option value="neutre">Neutre</option>
                 </select>
                 <input type="number" step="0.01" name="prix" id="edit_prix" placeholder="Prix" required>
+                <input type="file" name="photo" accept="image/*">
+                <img id="current_photo" src="" alt="Photo actuelle" style="max-width: 200px; display: none;">
                 <button type="submit" class="btn-ajouter">Modifier</button>
                 <button type="button" class="btn-supprimer" onclick="hideEditModal()">Annuler</button>
             </form>
@@ -309,4 +326,5 @@
         }
     </script>
 </body>
+
 </html>

@@ -45,7 +45,7 @@ Flight::route('POST /admin/accepter-depot', function(){
 });
 
 // Dans routes.php
-Flight::route('GET /cadeaux', function() {
+Flight::route('GET /ajout', function() {
     $controller = new AdminController();
     $controller->cadeaux();
 });
@@ -111,4 +111,18 @@ Flight::route('GET /depot', function() {
 Flight::route('POST /depot', function() {
     $controller = new UserController();
     $controller->faireDepot();
+});
+
+// Dans routes.php
+
+// Route pour afficher le formulaire de paramétrage
+Flight::route('GET /admin/commission', function() {
+    $controller = new AdminController();
+    $controller->showCommissionForm();
+});
+
+// Route pour mettre à jour la commission
+Flight::route('POST /admin/commission', function() {
+    $controller = new AdminController();
+    $controller->updateCommission();
 });

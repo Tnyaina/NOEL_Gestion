@@ -235,21 +235,21 @@ class UserModel
 
             // Créer la commande
             $sql = "INSERT INTO COMMANDE (id_user, total, date_commande) VALUES (?, ?, NOW())";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$id_user, $total]);
-        $id_commande = $this->db->lastInsertId();
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$id_user, $total]);
+            $id_commande = $this->db->lastInsertId();
 
             // Enregistrer les détails de la commande
             $sql = "INSERT INTO COMMANDE_DETAILS (id_commande, id_cadeaux) VALUES (?, ?)";
-        $stmt = $this->db->prepare($sql);
-        foreach ($cadeaux as $cadeau) {
-            $stmt->execute([$id_commande, $cadeau['id_cadeaux']]);
-        }
+            $stmt = $this->db->prepare($sql);
+            foreach ($cadeaux as $cadeau) {
+                $stmt->execute([$id_commande, $cadeau['id_cadeaux']]);
+            }
 
             // Mettre à jour le solde
             $sql = "INSERT INTO DEPOT (id_user, montant, status_depot) VALUES (?, ?, 'valide')";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$id_user, -$total]);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$id_user, -$total]);
 
             $this->db->commit();
             return true;
@@ -261,20 +261,38 @@ class UserModel
 
     // Dans UserModel.php, ajoutez cette méthode
 
-public function creerDepot($id_user, $montant)
-{
-    try {
-        $stmt = $this->db->prepare(
-            "INSERT INTO depot (id_user, montant, status_depot) 
+    public function creerDepot($id_user, $montant)
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "INSERT INTO depot (id_user, montant, status_depot) 
              VALUES (:id_user, :montant, 'en_attente')"
-        );
-        
-        return $stmt->execute([
-            'id_user' => $id_user,
-            'montant' => $montant
-        ]);
-    } catch (Exception $e) {
-        throw new Exception("Erreur lors de la création du dépôt: " . $e->getMessage());
+            );
+
+            return $stmt->execute([
+                'id_user' => $id_user,
+                'montant' => $montant
+            ]);
+        } catch (Exception $e) {
+            throw new Exception("Erreur lors de la création du dépôt: " . $e->getMessage());
+        }
     }
-}
+
+    public function getCurrentCommission()
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM COMMISSION ORDER BY date_modification DESC LIMIT 1");
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            throw new Exception("Erreur lors de la récupération de la commission: " . $e->getMessage());
+        }
+    }
+
+    public function calculerMontantApresCommission($montant)
+    {
+        $commission = $this->getCurrentCommission();
+        $tauxCommission = $commission['taux'];
+        return $montant * (1 - ($tauxCommission / 100));
+    }
 }
