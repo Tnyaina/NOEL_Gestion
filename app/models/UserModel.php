@@ -258,4 +258,23 @@ class UserModel
             return false;
         }
     }
+
+    // Dans UserModel.php, ajoutez cette méthode
+
+public function creerDepot($id_user, $montant)
+{
+    try {
+        $stmt = $this->db->prepare(
+            "INSERT INTO depot (id_user, montant, status_depot) 
+             VALUES (:id_user, :montant, 'en_attente')"
+        );
+        
+        return $stmt->execute([
+            'id_user' => $id_user,
+            'montant' => $montant
+        ]);
+    } catch (Exception $e) {
+        throw new Exception("Erreur lors de la création du dépôt: " . $e->getMessage());
+    }
+}
 }

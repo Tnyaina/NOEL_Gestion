@@ -100,3 +100,15 @@ Flight::route('POST /changer-tous-cadeaux', function() {
     $controller = new UserController();
     $controller->changerTousCadeaux();
 });
+
+// Dans routes.php, ajoutez ces routes
+
+Flight::route('GET /depot', function() {
+    $controller = new UserController();
+    $controller->showDepotForm();
+});
+
+Flight::route('POST /depot', function() {
+    $controller = new UserController();
+    $controller->faireDepot();
+});

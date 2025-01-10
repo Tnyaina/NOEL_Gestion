@@ -6,16 +6,15 @@ if (!isset($_SESSION['user'])) {
 ?>
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
-    <title>Accueil - Joyeux Noël</title>
+    <title>Faire un dépôt - Joyeux Noël</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
             font-family: 'Arial', sans-serif;
             background-color: #1a472a;
-            background-image:
+            background-image: 
                 radial-gradient(#ffffff 1px, transparent 1px),
                 radial-gradient(#ffffff 1px, transparent 1px);
             background-size: 50px 50px;
@@ -28,13 +27,10 @@ if (!isset($_SESSION['user'])) {
         .navbar {
             background: linear-gradient(145deg, #1a472a 0%, #0c2315 100%);
             padding: 15px 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 20px;
-            z-index: 1000;
         }
 
         .nav-links {
@@ -49,53 +45,31 @@ if (!isset($_SESSION['user'])) {
             padding: 8px 16px;
             border-radius: 25px;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .nav-link:hover {
             background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .logout-link {
-            color: #ff9999;
         }
 
         .main-content {
+            max-width: 600px;
+            margin: 40px auto;
             padding: 20px;
         }
 
-        .christmas-header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: linear-gradient(145deg, #c41e3a 0%, #8b0000 100%);
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .christmas-header h1 {
-            margin: 0;
-            font-size: 2.5em;
-            color: #fff;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .christmas-header i {
-            font-size: 2em;
-            margin: 10px;
-            color: #fff;
-        }
-
-        .form-container {
+        .depot-form {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 10px;
             padding: 20px;
-            margin-top: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             color: #333;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .form-title {
+            text-align: center;
+            color: #1a472a;
+            margin-bottom: 20px;
+            font-size: 1.5em;
         }
 
         .form-group {
@@ -114,6 +88,7 @@ if (!isset($_SESSION['user'])) {
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 16px;
+            box-sizing: border-box;
         }
 
         .submit-btn {
@@ -130,7 +105,6 @@ if (!isset($_SESSION['user'])) {
 
         .submit-btn:hover {
             background-color: #a01830;
-            transform: scale(1.02);
         }
 
         .error-message {
@@ -142,6 +116,15 @@ if (!isset($_SESSION['user'])) {
             border: 1px solid #ffcdd2;
         }
 
+        .success-message {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #c8e6c9;
+        }
+
         .solde-display {
             background: rgba(255, 255, 255, 0.1);
             padding: 10px 20px;
@@ -150,53 +133,30 @@ if (!isset($_SESSION['user'])) {
             align-items: center;
             gap: 10px;
         }
-
-        .christmas-decoration {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 20px;
-            background: repeating-linear-gradient(45deg,
-                    #c41e3a 0px,
-                    #c41e3a 20px,
-                    #1a472a 20px,
-                    #1a472a 40px);
-        }
     </style>
 </head>
-
 <body>
-    <div class="christmas-decoration"></div>
-
     <nav class="navbar">
         <div class="nav-links">
+            <a href="/accueil" class="nav-link">
+                <i class="fas fa-home"></i> Accueil
+            </a>
             <span class="solde-display">
                 <i class="fas fa-wallet"></i>
                 Solde: <?= number_format($solde, 2) ?> €
             </span>
-            <a href="/depot" class="nav-link">
-                <i class="fas fa-money-bill-wave"></i>
-                Dépôt d'argent
-            </a>
         </div>
-        <div class="nav-links">
-            
-            <a href="/logout" class="nav-link logout-link">
-                <i class="fas fa-sign-out-alt"></i>
-                Déconnexion
-            </a>
-        </div>
+        <a href="/logout" class="nav-link">
+            <i class="fas fa-sign-out-alt"></i> Déconnexion
+        </a>
     </nav>
 
     <div class="main-content">
-        <div class="christmas-header">
-            <i class="fas fa-gift"></i>
-            <h1>Sélection des Cadeaux de Noël</h1>
-            <i class="fas fa-star"></i>
-        </div>
+        <div class="depot-form">
+            <h2 class="form-title">
+                <i class="fas fa-euro-sign"></i> Faire un dépôt
+            </h2>
 
-        <div class="form-container">
             <?php if (isset($error)): ?>
                 <div class="error-message">
                     <i class="fas fa-exclamation-circle"></i>
@@ -204,40 +164,28 @@ if (!isset($_SESSION['user'])) {
                 </div>
             <?php endif; ?>
 
-            <form action="/selection-cadeaux" method="POST">
-                <div class="form-group">
-                    <label for="nb_filles">
-                        <i class="fas fa-female"></i>
-                        Nombre de filles
-                    </label>
-                    <input type="number" id="nb_filles" name="nb_filles" min="0" value="0" required>
+            <?php if (isset($success)): ?>
+                <div class="success-message">
+                    <i class="fas fa-check-circle"></i>
+                    <?= htmlspecialchars($success) ?>
                 </div>
+            <?php endif; ?>
 
+            <form action="/depot" method="POST">
                 <div class="form-group">
-                    <label for="nb_garcons">
-                        <i class="fas fa-male"></i>
-                        Nombre de garçons
+                    <label for="montant">
+                        <i class="fas fa-money-bill-wave"></i>
+                        Montant du dépôt (€)
                     </label>
-                    <input type="number" id="nb_garcons" name="nb_garcons" min="0" value="0" required>
+                    <input type="number" id="montant" name="montant" step="0.01" min="0" required>
                 </div>
 
                 <button type="submit" class="submit-btn">
-                    <i class="fas fa-magic"></i>
-                    Voir les suggestions de cadeaux
+                    <i class="fas fa-paper-plane"></i>
+                    Envoyer la demande de dépôt
                 </button>
             </form>
         </div>
     </div>
-
-    <script>
-        // Animation des boutons
-        document.querySelector('.submit-btn').addEventListener('mousedown', function() {
-            this.style.transform = 'scale(0.98)';
-        });
-        document.querySelector('.submit-btn').addEventListener('mouseup', function() {
-            this.style.transform = 'scale(1)';
-        });
-    </script>
 </body>
-
 </html>

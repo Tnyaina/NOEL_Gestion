@@ -256,6 +256,55 @@ class UserController
 
         Flight::redirect('/selection-cadeaux');
     }
+
+    // Dans UserController.php, ajoutez ces méthodes
+
+    public function showDepotForm()
+    {
+        if (!isset($_SESSION['user'])) {
+            Flight::redirect('/');
+            return;
+        }
+
+        Flight::render('user/depot', [
+            'error' => $_SESSION['depot_error'] ?? null,
+            'success' => $_SESSION['depot_success'] ?? null,
+            'solde' => $this->userModel->getSoldeValide($_SESSION['user']['id_user'])
+        ]);
+
+        unset($_SESSION['depot_error'], $_SESSION['depot_success']);
+    }
+
+    public function faireDepot()
+    {
+        if (!isset($_SESSION['user'])) {
+            Flight::redirect('/');
+            return;
+        }
+
+        $montant = filter_var(Flight::request()->data->montant, FILTER_VALIDATE_FLOAT);
+
+        if (!$montant || $montant <= 0) {
+            $_SESSION['depot_error'] = 'Le montant doit être un nombre positif';
+            Flight::redirect('/depot');
+            return;
+        }
+
+        try {
+            $success = $this->userModel->creerDepot($_SESSION['user']['id_user'], $montant);
+            if ($success) {
+                $_SESSION['depot_success'] = 'Votre demande de dépôt a été enregistrée et est en attente de validation';
+                Flight::redirect('/depot');
+            } else {
+                $_SESSION['depot_error'] = 'Une erreur est survenue lors du dépôt';
+                Flight::redirect('/depot');
+            }
+        } catch (Exception $e) {
+            $_SESSION['depot_error'] = 'Une erreur est survenue : ' . $e->getMessage();
+            Flight::redirect('/depot');
+        }
+    }
+
     public function logout()
     {
         // Détruire la session
