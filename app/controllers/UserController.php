@@ -359,11 +359,7 @@ class UserController
         $montant = filter_var(Flight::request()->data->montant, FILTER_VALIDATE_FLOAT);
         $commission = $this->userModel->calculerMontantApresCommission($montant);
 
-        if (!$montant || $montant <= 0) {
-            $_SESSION['error'] = 'Le montant du dépôt est invalide';
-            Flight::redirect('/selection-cadeaux');
-            return;
-        }
+        
 
         try {
             // Créer directement un dépôt validé
